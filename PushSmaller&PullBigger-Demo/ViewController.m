@@ -38,7 +38,7 @@
         headView.image = [UIImage imageNamed:headImgName];
         [self addSubview:headView];
         _headView = headView;
-
+        
         UILabel * signLabel = [[UILabel alloc]initWithFrame:(CGRect){0,CGRectGetMaxY(headView.frame) ,self.bounds.size.width,40}];
         signLabel.text = signature;
         signLabel.textAlignment = NSTextAlignmentCenter;
@@ -91,7 +91,7 @@
     myTableView.dataSource = self;
     myTableView.contentInset = UIEdgeInsetsMake(headRect.size.height-navHeight-navHeight, 0, 0, 0);
     _myTableView = myTableView;
-
+    //myTableView.backgroundColor = [UIColor redColor];
     [self.view addSubview:myTableView];
     
     HeadView * vc = [[HeadView alloc]initWithFrame:headRect backgroundView:@"background.jpg" headView:@"headImg.jpg" headViewWidth:(CGFloat)(VCWidth / 4) signLabel:@"Crazy Steven 原创"];
@@ -140,7 +140,7 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     
     CGFloat offset_Y = scrollView.contentOffset.y + headRect.size.height-navHeight-navHeight;
-    
+
     if  (offset_Y < 0) {
         
         _myView.backgroundView.contentMode = UIViewContentModeScaleToFill;
@@ -150,7 +150,9 @@
         
         _myView.backgroundView.contentMode = UIViewContentModeTop;
         
-        _myView.backgroundView.frame = CGRectMake(0 ,navHeight* offset_Y/(headRect.size.height-navHeight-navHeight)-navHeight , VCWidth , headRect.size.height -(navHeight + navHeight* offset_Y/(headRect.size.height-navHeight-navHeight)-navHeight) - offset_Y);
+        CGFloat y = navHeight* offset_Y/(headRect.size.height-navHeight-navHeight)-navHeight;
+        
+        _myView.backgroundView.frame = CGRectMake(0 ,y , VCWidth , headRect.size.height -(navHeight + y) - offset_Y);
         
         
         CGFloat width = offset_Y*(40-(VCWidth / 4))/(headRect.size.height-navHeight-navHeight)+(VCWidth / 4);
@@ -161,6 +163,22 @@
         _myView.signLabel.frame =CGRectMake(0, CGRectGetMaxY(_myView.headView.frame), VCWidth, 40);
         
         _myView.signLabel.alpha = 1 - (offset_Y*3 / (headRect.size.height-navHeight-navHeight) /2);
+    }else if(offset_Y > (headRect.size.height-navHeight-navHeight)) {
+        _myView.backgroundView.contentMode = UIViewContentModeTop;
+        
+        CGFloat y = navHeight* (headRect.size.height-navHeight-navHeight)/(headRect.size.height-navHeight-navHeight)-navHeight;
+        
+        _myView.backgroundView.frame = CGRectMake(0 ,y , VCWidth , headRect.size.height -(navHeight + y) - (headRect.size.height-navHeight-navHeight));
+        
+        
+        CGFloat width = (headRect.size.height-navHeight-navHeight)*(40-(VCWidth / 4))/(headRect.size.height-navHeight-navHeight)+(VCWidth / 4);
+        _myView.headView.frame =CGRectMake(0, 0, width,width);
+        _myView.headView.layer.cornerRadius =width*0.5;
+        _myView.headView.center = _myView.backgroundView.center;
+        
+        _myView.signLabel.frame =CGRectMake(0, CGRectGetMaxY(_myView.headView.frame), VCWidth, 40);
+        
+        _myView.signLabel.alpha = 1 - ((headRect.size.height-navHeight-navHeight)*3 / (headRect.size.height-navHeight-navHeight) /2);
     }
 }
 
